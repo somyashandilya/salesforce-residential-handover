@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Checklist_Item__c</fullName>
+    <label>Checklist Item</label>
+    <type>Lookup</type>
+    <referenceTo>Inspection_Checklist_Item__c</referenceTo>
+    <relationshipName>Snag_Checklist_Item</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+</CustomField>

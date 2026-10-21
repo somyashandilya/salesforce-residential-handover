@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Responsible_Team__c</fullName>
+    <label>Responsible Team</label>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Civil &amp; Finishes</fullName>
+                <default>true</default>
+                <label>Civil &amp; Finishes</label>
+            </value>
+            <value>
+                <fullName>Electrical</fullName>
+                <default>false</default>
+                <label>Electrical</label>
+            </value>
+            <value>
+                <fullName>Plumbing</fullName>
+                <default>false</default>
+                <label>Plumbing</label>
+            </value>
+            <value>
+                <fullName>Doors &amp; Windows</fullName>
+                <default>false</default>
+                <label>Doors &amp; Windows</label>
+            </value>
+            <value>
+                <fullName>HVAC</fullName>
+                <default>false</default>
+                <label>HVAC</label>
+            </value>
+            <value>
+                <fullName>Fixtures</fullName>
+                <default>false</default>
+                <label>Fixtures</label>
+            </value>
+            <value>
+                <fullName>Painting</fullName>
+                <default>false</default>
+                <label>Painting</label>
+            </value>
+            <value>
+                <fullName>Carpentry</fullName>
+                <default>false</default>
+                <label>Carpentry</label>
+            </value>
+            <value>
+                <fullName>External Contractor</fullName>
+                <default>false</default>
+                <label>External Contractor</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

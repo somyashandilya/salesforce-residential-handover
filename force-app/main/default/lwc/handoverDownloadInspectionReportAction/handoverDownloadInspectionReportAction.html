@@ -1,0 +1,100 @@
+<template>
+    <lightning-quick-action-panel title="Download Inspection Report">
+        <template lwc:if={isLoading}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <lightning-spinner alternative-text="Loading Inspection Data..." size="medium"></lightning-spinner>
+                <p class="slds-m-top_large slds-text-color_weak font-semibold">Loading inspection audit details...</p>
+            </div>
+        </template>
+        <template lwc:else>
+            <template lwc:if={hasInspection}>
+                <!-- Inspection Audit Summary -->
+                <div class="slds-p-around_small modal-body-container">
+                    <!-- Dark Navy Header Banner -->
+                    <div class="report-header-banner slds-p-around_small slds-m-bottom_small">
+                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                            <div>
+                                <h3 class="slds-text-heading_small font-bold text-white">
+                                    {reportData.inspection.Name} &bull; {reportData.inspection.Inspection_Type__c}
+                                </h3>
+                                <p class="text-slate-300 slds-m-top_xxx-small font-semibold">
+                                    {reportData.projectName} &bull; {reportData.unitName} &bull; Handover #{reportData.handoverRef}
+                                </p>
+                            </div>
+                            <div>
+                                <span class="inspection-status-pill">{reportData.inspection.Status__c}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inspector & Metadata Strip -->
+                    <div class="slds-box slds-box_xx-small slds-theme_shade slds-m-bottom_small meta-strip">
+                        <div class="slds-grid slds-wrap slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <span class="meta-label">LEAD AUDITOR</span>
+                                <span class="meta-val">{reportData.inspection.Inspector_Name__c} ({reportData.inspection.Inspector_Company__c})</span>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <span class="meta-label">INSPECTION DATE</span>
+                                <span class="meta-val">{formattedInspectionDate}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Metrics Grid -->
+                    <div class="slds-grid slds-gutters_x-small slds-m-bottom_medium">
+                        <div class="slds-col slds-size_3-of-12">
+                            <div class="metric-card metric-total">
+                                <span class="metric-num">{reportData.totalCount}</span>
+                                <span class="metric-lbl">Total Items</span>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_3-of-12">
+                            <div class="metric-card metric-pass">
+                                <span class="metric-num text-success">{reportData.passedCount}</span>
+                                <span class="metric-lbl">Passed</span>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_3-of-12">
+                            <div class="metric-card metric-issue">
+                                <span class="metric-num text-error">{reportData.issuesCount}</span>
+                                <span class="metric-lbl">Issues Found</span>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_3-of-12">
+                            <div class="metric-card metric-na">
+                                <span class="metric-num text-muted">{reportData.naCount}</span>
+                                <span class="metric-lbl">N/A</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">
+                        The full official PDF report contains complete category-wise audit tables, snags register, and formal developer certification sign-offs.
+                    </p>
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="slds-p-around_large slds-text-align_center">
+                    <lightning-icon icon-name="utility:info_alt" size="medium" variant="warning" class="slds-m-bottom_small"></lightning-icon>
+                    <h3 class="slds-text-heading_small font-bold" style="color: #0B2345;">No Inspection Record Available</h3>
+                    <p class="slds-text-body_regular slds-text-color_weak slds-m-top_x-small">
+                        An inspection has not been initiated for this Handover record yet.
+                        Please ensure Stage 1 (Readiness) is cleared and start an inspection round before generating the report.
+                    </p>
+                </div>
+            </template>
+        </template>
+
+        <div slot="footer">
+            <template lwc:if={hasInspection}>
+                <lightning-button label="Close" variant="neutral" onclick={handleClose} class="slds-m-right_x-small"></lightning-button>
+                <lightning-button label="View PDF in New Tab" variant="neutral" icon-name="utility:preview" onclick={handleOpenPdfTab} class="slds-m-right_x-small"></lightning-button>
+                <lightning-button label="Download PDF" variant="brand" icon-name="utility:download" onclick={handleDownloadPdf} disabled={isDownloading}></lightning-button>
+            </template>
+            <template lwc:else>
+                <lightning-button label="Close" variant="neutral" onclick={handleClose}></lightning-button>
+            </template>
+        </div>
+    </lightning-quick-action-panel>
+</template>

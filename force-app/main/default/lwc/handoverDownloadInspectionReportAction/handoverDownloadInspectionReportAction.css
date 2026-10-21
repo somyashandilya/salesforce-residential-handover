@@ -1,0 +1,85 @@
+:host {
+    display: block;
+}
+
+.report-header-banner {
+    background-color: #0B2345;
+    border-radius: 4px;
+}
+
+.text-white {
+    color: #FFFFFF !important;
+}
+
+.text-slate-300 {
+    color: #CBD5E1 !important;
+}
+
+.inspection-status-pill {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.meta-strip {
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 4px;
+    padding: 8px 12px;
+}
+
+.meta-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.meta-val {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #0F172A;
+}
+
+.metric-card {
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 4px;
+    padding: 8px 6px;
+    text-align: center;
+}
+
+.metric-total { border-color: #CBD5E1; }
+.metric-pass { background-color: #ECFDF5; border-color: #A7F3D0; }
+.metric-issue { background-color: #FEF2F2; border-color: #FECACA; }
+.metric-na { background-color: #F1F5F9; border-color: #E2E8F0; }
+
+.metric-num {
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.metric-lbl {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+}
+
+.text-success { color: #047857; }
+.text-error { color: #B91C1C; }
+.text-muted { color: #64748B; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }

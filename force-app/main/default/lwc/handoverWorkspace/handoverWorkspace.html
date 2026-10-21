@@ -1,0 +1,1047 @@
+<template>
+    <div class="slds-theme_default main-page-wrapper">
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="Loading Handover Workspace..." size="medium"></lightning-spinner>
+        </template>
+
+        <template lwc:if={handover}>
+            <!-- ================= STAGE WORKFLOW PATH (1. READINESS -> 2. INSPECTION & AUDIT -> 3. SNAG RESOLUTION -> 4. APPOINTMENT & HANDOVER -> 5. COMPLETED) ================= -->
+            <template lwc:if={isPathMode}>
+                <div class="clean-path-wrapper slds-m-bottom_small">
+                    <nav class="clean-path-nav" aria-label="Handover Journey Path">
+                        <div class="clean-path-track">
+                            <!-- Stage 1: Readiness -->
+                            <div class={stepClassReadiness}
+                                 onclick={handleSelectStage}
+                                 data-stage="Readiness"
+                                 role="button"
+                                 tabindex="0"
+                                 title="Stage 1: Readiness">
+                                <span class="path-step-icon">
+                                    <template lwc:if={isStepCompleteReadiness}>
+                                        <lightning-icon icon-name="utility:check" size="xx-small" class="subtle-check-icon"></lightning-icon>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="path-step-num">1</span>
+                                    </template>
+                                </span>
+                                <span class="path-step-label">1. Readiness</span>
+                            </div>
+
+                            <!-- Stage 2: Inspection & Audit -->
+                            <div class={stepClassInspection}
+                                 onclick={handleSelectStage}
+                                 data-stage="Inspection"
+                                 role="button"
+                                 tabindex="0"
+                                 title="Stage 2: Inspection &amp; Audit">
+                                <span class="path-step-icon">
+                                    <template lwc:if={isStepCompleteInspection}>
+                                        <lightning-icon icon-name="utility:check" size="xx-small" class="subtle-check-icon"></lightning-icon>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="path-step-num">2</span>
+                                    </template>
+                                </span>
+                                <span class="path-step-label">2. Inspection &amp; Audit</span>
+                            </div>
+
+                            <!-- Stage 3: Snag Resolution -->
+                            <div class={stepClassResolution}
+                                 onclick={handleSelectStage}
+                                 data-stage="Resolution"
+                                 role="button"
+                                 tabindex="0"
+                                 title="Stage 3: Snag Resolution">
+                                <span class="path-step-icon">
+                                    <template lwc:if={isStepCompleteResolution}>
+                                        <lightning-icon icon-name="utility:check" size="xx-small" class="subtle-check-icon"></lightning-icon>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="path-step-num">3</span>
+                                    </template>
+                                </span>
+                                <span class="path-step-label">3. Snag Resolution</span>
+                            </div>
+
+                            <!-- Stage 4: Appointment & Handover -->
+                            <div class={stepClassAppointment}
+                                 onclick={handleSelectStage}
+                                 data-stage="Appointment"
+                                 role="button"
+                                 tabindex="0"
+                                 title="Stage 4: Appointment &amp; Handover">
+                                <span class="path-step-icon">
+                                    <template lwc:if={isStepCompleteAppointment}>
+                                        <lightning-icon icon-name="utility:check" size="xx-small" class="subtle-check-icon"></lightning-icon>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="path-step-num">4</span>
+                                    </template>
+                                </span>
+                                <span class="path-step-label">4. Appointment &amp; Handover</span>
+                            </div>
+
+                            <!-- Stage 5: Completed -->
+                            <div class={stepClassCompleted}
+                                 onclick={handleSelectStage}
+                                 data-stage="Completed"
+                                 role="button"
+                                 tabindex="0"
+                                 title="Stage 5: Completed">
+                                <span class="path-step-icon">
+                                    <template lwc:if={isStepCompleteCompleted}>
+                                        <lightning-icon icon-name="utility:check" size="xx-small" class="subtle-check-icon"></lightning-icon>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="path-step-num">5</span>
+                                    </template>
+                                </span>
+                                <span class="path-step-label">5. Completed</span>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </template>
+
+            <template lwc:if={isWorkspaceMode}>
+                <div class="stage-workspace-content slds-m-bottom_medium">
+
+                <!-- ──── STAGE 1: READINESS ──── -->
+                <template lwc:if={isStageReadiness}>
+                    <article class="slds-card slds-card_boundary slds-p-around_medium stage-card">
+                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_medium slds-p-bottom_small slds-border_bottom">
+                            <div>
+                                <h2 class="slds-text-heading_small font-weight-bold">Stage 1: Readiness</h2>
+                            </div>
+                            <div>
+                                <template lwc:if={cannotStartInspection}>
+                                    <span class="slds-badge slds-theme_success font-weight-bold">
+                                        <lightning-icon icon-name="utility:check" size="xx-small" variant="inverse" class="slds-m-right_xx-small"></lightning-icon>
+                                        Readiness Cleared
+                                    </span>
+                                </template>
+                                <template lwc:else>
+                                    <span class="slds-badge slds-theme_success font-weight-bold">Prerequisites Cleared &bull; Ready for Inspection</span>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Target Inspection Completion Date & Inspection Actions -->
+                        <div class="slds-box slds-box_small slds-theme_shade slds-m-bottom_medium slds-grid slds-grid_align-spread slds-grid_vertical-align-center" style="border-left: 4px solid #0B2345; background-color: #F8FAFC;">
+                            <div class="slds-grid slds-grid_vertical-align-center">
+                                <lightning-icon icon-name="standard:event" size="small" class="slds-m-right_small"></lightning-icon>
+                                <div>
+                                    <div class="slds-text-title_bold font-weight-bold" style="color: #0B2345;">Target Inspection Completion Date</div>
+                                    <div class="slds-text-body_small slds-text-color_weak">
+                                        Planned audit completion deadline: <strong style="color: #0F172A;">{targetInspectionDateFormatted}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <lightning-button label="Edit Target Date" icon-name="utility:edit" size="small" onclick={openEditTargetDateModal} disabled={isActionDisabled}></lightning-button>
+                            </div>
+                        </div>
+
+                        <!-- 4 Readiness Gate Cards -->
+                        <div class="slds-grid slds-gutters_small slds-wrap">
+                            <!-- Tile 1: Booking Clearance -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-bottom_x-small">
+                                <div class="readiness-tile">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <span class="readiness-icon-box icon-booking">
+                                            <lightning-icon icon-name="standard:record" size="x-small"></lightning-icon>
+                                        </span>
+                                        <span class="slds-badge slds-theme_success">{readiness.approvalStatus}</span>
+                                    </div>
+                                    <div class="readiness-tile-title slds-m-top_small">Booking Clearance</div>
+                                    <div class="readiness-tile-meta slds-m-top_xx-small">
+                                        Ref: <strong>#{unitSummary.bookingReference}</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tile 2: Financial Clearance -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-bottom_x-small">
+                                <div class="readiness-tile">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <span class="readiness-icon-box icon-finance">
+                                            <lightning-icon icon-name="standard:currency" size="x-small"></lightning-icon>
+                                        </span>
+                                        <span class="slds-badge slds-theme_success">Principal Paid: {readiness.paymentDetails}</span>
+                                    </div>
+                                    <div class="readiness-tile-title slds-m-top_small">Financial Clearance</div>
+                                    <div class="readiness-tile-meta slds-m-top_xx-small">
+                                        Agreement Value: <strong>{unitSummary.finalAmountFormatted}</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tile 3: Occupancy Certificate -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-bottom_x-small">
+                                <div class="readiness-tile">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <span class="readiness-icon-box icon-oc">
+                                            <lightning-icon icon-name="standard:task" size="x-small"></lightning-icon>
+                                        </span>
+                                        <span class="slds-badge slds-theme_success">{readiness.ocDetails}</span>
+                                    </div>
+                                    <div class="readiness-tile-title slds-m-top_small">Occupancy Certificate (OC)</div>
+                                    <div class="readiness-tile-meta slds-m-top_xx-small">
+                                        Tower: <strong>{unitSummary.towerName}</strong> &bull; {unitSummary.floorName}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tile 4: Possession Readiness -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-bottom_x-small">
+                                <div class="readiness-tile">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <span class="readiness-icon-box icon-unit">
+                                            <lightning-icon icon-name="standard:home" size="x-small"></lightning-icon>
+                                        </span>
+                                        <span class="slds-badge slds-theme_success">{unitSummary.possessionReadinessStatus}</span>
+                                    </div>
+                                    <div class="readiness-tile-title slds-m-top_small">Civil Construction Gate</div>
+                                    <div class="readiness-tile-meta slds-m-top_xx-small">
+                                        Ready Date: <strong>{readiness.possessionReadyDate}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </template>
+
+                <!-- ──── STAGE 2: INSPECTION & AUDIT ──── -->
+                <template lwc:if={isStageInspection}>
+                    <article class="slds-card slds-card_boundary slds-p-around_medium stage-card">
+                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+                            <div>
+                                <h2 class="slds-text-heading_small font-weight-bold">Stage 2: Inspection &amp; Audit</h2>
+                            </div>
+                            <div class="slds-grid slds-gutters_x-small slds-grid_vertical-align-center">
+                                <template lwc:if={canEditChecklist}>
+                                    <div class="slds-col">
+                                        <lightning-button variant="neutral" label="+ Add Inspection Item" icon-name="utility:add" onclick={openAddChecklistItemModal} disabled={isActionDisabled}></lightning-button>
+                                    </div>
+                                </template>
+                                <div class="slds-col">
+                                    <template lwc:if={isInspectionCompleted}>
+                                        <span class="slds-badge slds-theme_success font-weight-bold">
+                                            <lightning-icon icon-name="utility:check" size="xx-small" variant="inverse" class="slds-m-right_xx-small"></lightning-icon>
+                                            Inspection Completed
+                                        </span>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Checklist Summary Strip -->
+                        <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small slds-p-around_xx-small slds-theme_shade slds-box slds-box_xx-small">
+                            <span class="metric-pill pill-passed slds-m-right_x-small">Passed: <strong>{passedChecklistCount}</strong></span>
+                            <span class="metric-pill pill-issue slds-m-right_x-small">Issues: <strong>{issuesChecklistCount}</strong></span>
+                            <span class="metric-pill pill-na slds-m-right_x-small">N/A: <strong>{naChecklistCount}</strong></span>
+                            <span class={pendingPillClass}>Pending: <strong>{pendingChecklistCount}</strong></span>
+                            <span class="slds-col slds-text-align_right slds-text-body_small slds-text-color_weak">{inspectionPercent}% Answered</span>
+                        </div>
+
+                        <!-- CATEGORIES & CHECKLIST ITEMS -->
+                        <template for:each={checklistGroups} for:item="grp">
+                            <div key={grp.category} class="category-block slds-m-bottom_small">
+                                <div class="category-header slds-p-around_x-small slds-theme_shade slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                    <h3 class="slds-text-title_bold font-weight-bold">
+                                        {grp.category}
+                                    </h3>
+                                    <span class="category-count-badge">{grp.answeredCount} of {grp.totalCount} completed</span>
+                                </div>
+                                <div class="checklist-items-container">
+                                    <template for:each={grp.items} for:item="itm">
+                                        <div key={itm.Id} class={itm.rowClass}>
+                                            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                                <div class="chk-item-main slds-grow slds-m-right_small">
+                                                    <div class="slds-grid slds-grid_vertical-align-center">
+                                                        <span class={itm.statusIconClass}>{itm.statusIcon}</span>
+                                                        <strong class="chk-item-title slds-m-right_small">{itm.Name}</strong>
+
+                                                        <template lwc:if={itm.isPass}>
+                                                            <span class="status-pill pill-pass">Passed</span>
+                                                        </template>
+                                                        <template lwc:if={itm.isIssue}>
+                                                            <template lwc:if={itm.hasLinkedSnag}>
+                                                                <span class="status-pill pill-issue-linked">Issue Found &bull; {itm.linkedSnagName}</span>
+                                                            </template>
+                                                            <template lwc:else>
+                                                                <span class="status-pill pill-issue">Issue Found</span>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={itm.isNA}>
+                                                            <span class="status-pill pill-na">N/A</span>
+                                                        </template>
+                                                    </div>
+                                                    <div class="chk-item-meta slds-m-top_xxx-small slds-text-body_small slds-text-color_weak">
+                                                        Location: {itm.Location__c}
+                                                    </div>
+                                                </div>
+
+                                                <div class="chk-item-actions slds-no-flex slds-grid slds-grid_vertical-align-center">
+                                                    <div class="slds-button-group chk-btn-group" role="group">
+                                                        <button class={itm.passBtnClass} onclick={handleSetPass} data-id={itm.Id} disabled={isActionDisabled}>
+                                                            {itm.passBtnLabel}
+                                                        </button>
+                                                        <button class={itm.issueBtnClass} onclick={handleSetIssue} data-id={itm.Id} disabled={isActionDisabled}>
+                                                            {itm.issueBtnLabel}
+                                                        </button>
+                                                        <button class={itm.naBtnClass} onclick={handleSetNA} data-id={itm.Id} disabled={isActionDisabled}>
+                                                            {itm.naBtnLabel}
+                                                        </button>
+                                                        <template lwc:if={canEditChecklist}>
+                                                            <lightning-button-icon icon-name="utility:delete" variant="border-filled" size="x-small" onclick={handleDeleteChecklistItem} data-id={itm.Id} title="Remove Line Item" alternative-text="Remove Line Item" class="slds-m-left_x-small"></lightning-button-icon>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </article>
+                </template>
+
+                <!-- ──── STAGE 3: SNAG RESOLUTION ──── -->
+                <template lwc:if={isStageResolution}>
+                    <article class="slds-card slds-card_boundary slds-p-around_medium stage-card">
+                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+                            <div>
+                                <h2 class="slds-text-heading_small font-weight-bold">Stage 3: Snag Resolution</h2>
+                            </div>
+                            <div class="slds-grid slds-gutters_x-small slds-grid_vertical-align-center">
+                                <template lwc:if={isResolutionLocked}>
+                                    <div class="slds-col">
+                                        <span class="slds-badge slds-theme_success font-weight-bold">
+                                            <lightning-icon icon-name="utility:check" size="xx-small" variant="inverse" class="slds-m-right_xx-small"></lightning-icon>
+                                            Snags Resolved &amp; Verified
+                                        </span>
+                                    </div>
+                                </template>
+                                <template lwc:else>
+                                    <div class="slds-col">
+                                        <lightning-button label="Raise Snag" variant="neutral" icon-name="utility:add" onclick={openRaiseSnagModal} disabled={isResolutionLocked}></lightning-button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <template lwc:if={hasUnresolvedSnags}>
+                            <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_small" role="alert">
+                                <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                <span>Cannot advance to Appointment while required snags are unresolved or unverified ({unresolvedSnagsCount} pending).</span>
+                            </div>
+                        </template>
+
+                        <!-- Snag Metrics Strip -->
+                        <div class="slds-grid slds-gutters_small slds-m-bottom_small">
+                            <div class="slds-col slds-size_1-of-5">
+                                <div class="metric-tile">
+                                    <div class="metric-label">TOTAL SNAGS</div>
+                                    <div class="metric-val">{snagBoard.totalCount}</div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-5">
+                                <div class="metric-tile">
+                                    <div class="metric-label">OPEN</div>
+                                    <div class="metric-val" style="color: #ea580c;">{snagBoard.openCount}</div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-5">
+                                <div class="metric-tile">
+                                    <div class="metric-label">IN PROGRESS</div>
+                                    <div class="metric-val" style="color: #d97706;">{snagBoard.inProgressCount}</div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-5">
+                                <div class="metric-tile">
+                                    <div class="metric-label">VERIFICATION</div>
+                                    <div class="metric-val" style="color: #2563eb;">{snagBoard.verificationCount}</div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-5">
+                                <div class="metric-tile">
+                                    <div class="metric-label">CLOSED</div>
+                                    <div class="metric-val" style="color: #059669;">{snagBoard.closedCount}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4-Column Kanban Board -->
+                        <div class="kanban-grid">
+                            <!-- Column 1: OPEN -->
+                            <div class="kanban-col">
+                                <div class="kanban-header">
+                                    <span>1. OPEN</span>
+                                    <span class="slds-badge slds-badge_lightest">{snagBoard.openCount}</span>
+                                </div>
+                                <template for:each={snagBoard.openSnags} for:item="s">
+                                    <div key={s.Id} class={s.cardClass}>
+                                        <div class="slds-grid slds-grid_align-spread">
+                                            <strong class="slds-text-body_small">{s.Name}</strong>
+                                            <span class={s.severityBadgeClass}>{s.Severity__c}</span>
+                                        </div>
+                                        <div class="slds-text-title_bold slds-m-top_xx-small">{s.Location__c} &bull; {s.Category__c}</div>
+                                        <p class="slds-text-body_small slds-m-top_xx-small">{s.Snag_Description__c}</p>
+                                        <template lwc:if={s.Responsible_Team__c}>
+                                            <div class="slds-text-body_small slds-m-top_xxx-small font-weight-bold" style="color: #0b2345;">
+                                                Team: {s.Responsible_Team__c}
+                                            </div>
+                                        </template>
+                                        <template lwc:if={isNotResolutionLocked}>
+                                            <div class="slds-m-top_x-small slds-text-align_right">
+                                                <lightning-button size="x-small" variant="brand-outline" label="Assign Owner &amp; Team" onclick={handleOpenAssignModal} data-id={s.Id}></lightning-button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Column 2: IN PROGRESS -->
+                            <div class="kanban-col">
+                                <div class="kanban-header">
+                                    <span>2. IN PROGRESS</span>
+                                    <span class="slds-badge slds-badge_lightest">{snagBoard.inProgressCount}</span>
+                                </div>
+                                <template for:each={snagBoard.inProgressSnags} for:item="s">
+                                    <div key={s.Id} class={s.cardClass}>
+                                        <div class="slds-grid slds-grid_align-spread">
+                                            <strong class="slds-text-body_small">{s.Name}</strong>
+                                            <span class={s.severityBadgeClass}>{s.Severity__c}</span>
+                                        </div>
+                                        <div class="slds-text-title_bold slds-m-top_xx-small">{s.Location__c} &bull; {s.Category__c}</div>
+                                        <p class="slds-text-body_small slds-m-top_xx-small">{s.Snag_Description__c}</p>
+                                        <div class="slds-text-body_small slds-m-top_xx-small font-weight-bold" style="color: #0b2345;">
+                                            Assigned: {s.Assigned_Contractor_Name__c}
+                                        </div>
+                                        <template lwc:if={isNotResolutionLocked}>
+                                            <div class="slds-m-top_x-small slds-text-align_right">
+                                                <lightning-button size="x-small" variant="brand" label="Resolve &amp; Upload Evidence" onclick={openResolveModal} data-id={s.Id}></lightning-button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Column 3: VERIFICATION -->
+                            <div class="kanban-col">
+                                <div class="kanban-header">
+                                    <span>3. VERIFICATION</span>
+                                    <span class="slds-badge slds-badge_lightest">{snagBoard.verificationCount}</span>
+                                </div>
+                                <template for:each={snagBoard.verificationSnags} for:item="s">
+                                    <div key={s.Id} class={s.cardClass}>
+                                        <div class="slds-grid slds-grid_align-spread">
+                                            <strong class="slds-text-body_small">{s.Name}</strong>
+                                            <span class={s.severityBadgeClass}>{s.Severity__c}</span>
+                                        </div>
+                                        <div class="slds-text-title_bold slds-m-top_xx-small">{s.Location__c} &bull; {s.Category__c}</div>
+                                        <p class="slds-text-body_small slds-m-top_xx-small">{s.Snag_Description__c}</p>
+                                        <template lwc:if={isNotResolutionLocked}>
+                                            <div class="slds-grid slds-gutters_xx-small slds-m-top_x-small">
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <lightning-button size="x-small" variant="success" label="Approve" onclick={handleApproveSnag} data-id={s.Id} class="slds-button_stretch"></lightning-button>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <lightning-button size="x-small" variant="destructive-text" label="Reject" onclick={handleOpenReopenModal} data-id={s.Id} class="slds-button_stretch"></lightning-button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Column 4: CLOSED -->
+                            <div class="kanban-col">
+                                <div class="kanban-header">
+                                    <span>4. CLOSED</span>
+                                    <span class="slds-badge slds-theme_success">{snagBoard.closedCount}</span>
+                                </div>
+                                <template for:each={snagBoard.closedSnags} for:item="s">
+                                    <div key={s.Id} class={s.cardClass}>
+                                        <div class="slds-grid slds-grid_align-spread">
+                                            <strong class="slds-text-body_small">{s.Name}</strong>
+                                            <lightning-icon icon-name="utility:check" size="xx-small" variant="success"></lightning-icon>
+                                        </div>
+                                        <div class="slds-text-body_small slds-m-top_xx-small">{s.Location__c} &bull; {s.Snag_Description__c}</div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </article>
+                </template>
+
+                <!-- ──── STAGE 4: APPOINTMENT & HANDOVER ──── -->
+                <template lwc:if={isStageAppointment}>
+                    <article class="slds-card slds-card_boundary slds-p-around_medium stage-card">
+                        <!-- Appointment Scheduling -->
+                        <div class="appointment-section slds-m-bottom_large">
+                            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+                                <div>
+                                    <h2 class="slds-text-heading_small font-weight-bold">Stage 4: Appointment &amp; Handover</h2>
+                                </div>
+                                <div class="slds-grid slds-gutters_x-small slds-grid_vertical-align-center">
+                                    <template lwc:if={isAppointmentLocked}>
+                                        <div class="slds-col">
+                                            <span class="slds-badge slds-theme_success font-weight-bold">
+                                                <lightning-icon icon-name="utility:check" size="xx-small" variant="inverse" class="slds-m-right_xx-small"></lightning-icon>
+                                                Handover Executed
+                                            </span>
+                                        </div>
+                                    </template>
+                                    <template lwc:else>
+                                        <div class="slds-col">
+                                            <lightning-button-group>
+                                                <template lwc:if={isCustomerInviteSent}>
+                                                    <lightning-button label="Reschedule" variant="neutral" icon-name="utility:event" onclick={openRescheduleModal} disabled={isAppointmentReadOnly}></lightning-button>
+                                                </template>
+                                                <template lwc:else>
+                                                    <lightning-button label="Invite Customer" variant="neutral" icon-name="utility:email" onclick={handleSendCustomerInvite} disabled={isAppointmentReadOnly}></lightning-button>
+                                                </template>
+                                                <lightning-button label="Complete Handover" variant="brand" icon-name="utility:success" onclick={handleCompletePhysicalHandover} disabled={isCompleteHandoverDisabled}></lightning-button>
+                                            </lightning-button-group>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="slds-grid slds-gutters_small slds-wrap slds-m-bottom_small">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                                    <lightning-input type="date" label="Appointment Date" value={aptDate} onchange={handleAptDateChange} class="slds-m-bottom_x-small" disabled={isAppointmentDateDisabled} required></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                                    <lightning-combobox label="Time Slot" value={aptSlot} options={timeSlotOptions} onchange={handleAptSlotChange} class="slds-m-bottom_x-small" disabled={isAppointmentDateDisabled} required></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                                    <lightning-input type="text" label="Location" value={aptLocation} onchange={handleAptLocationChange} class="slds-m-bottom_x-small" disabled={isAppointmentDateDisabled} required></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1">
+                                    <lightning-textarea label="Customer Instructions / Notes" value={aptInstructions} onchange={handleAptInstructionsChange} class="slds-m-bottom_x-small" disabled={isAppointmentDateDisabled}></lightning-textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Physical Handover Protocol -->
+                        <div class="handover-completion-section slds-border_top slds-p-top_medium">
+                            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+                                <div>
+                                    <h3 class="slds-text-title_bold font-weight-bold" style="font-size: 0.95rem; color: #0b2345;">
+                                        PHYSICAL HANDOVER PROTOCOL
+                                    </h3>
+                                </div>
+                                <template lwc:if={isAllHandoverSectionsComplete}>
+                                    <span class="slds-badge slds-theme_success font-weight-bold">Ready for Completion</span>
+                                </template>
+                            </div>
+
+                            <!-- Section A: Keys & Access Controls -->
+                            <div class="handover-section-box slds-box slds-box_small slds-m-bottom_medium">
+                                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                    <h4 class="slds-text-title_bold font-weight-bold" style="color: #0b2345;">
+                                        Section A: Keys &amp; Access Controls
+                                    </h4>
+                                    <span class={sectionABadgeClass}>{sectionABadgeLabel}</span>
+                                </div>
+                                <div class="slds-grid slds-gutters_small slds-wrap">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-bottom_x-small">
+                                        <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                            <lightning-input type="checkbox" label="Physical Key Sets Handed Over" checked={keysHandedOver} onchange={handleKeysHandedOverChange} disabled={isAppointmentReadOnly}></lightning-input>
+                                            <div class="slds-m-top_xx-small slds-p-left_medium">
+                                                <lightning-input type="number" label="Number of Key Sets" value={keysSetsCount} onchange={handleKeysSetsCountChange} min="1" max="10" disabled={isAppointmentReadOnly}></lightning-input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-bottom_x-small">
+                                        <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                            <lightning-input type="checkbox" label="Access Cards Handed Over" checked={cardsHandedOver} onchange={handleCardsHandedOverChange} disabled={isAppointmentReadOnly}></lightning-input>
+                                            <div class="slds-m-top_xx-small slds-p-left_medium">
+                                                <lightning-input type="number" label="Number of Access Cards" value={accessCardsCount} onchange={handleAccessCardsCountChange} min="1" max="10" disabled={isAppointmentReadOnly}></lightning-input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section B: Document Handover -->
+                            <div class="handover-section-box slds-box slds-box_small slds-m-bottom_medium">
+                                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                    <h4 class="slds-text-title_bold font-weight-bold" style="color: #0b2345;">
+                                        Section B: Document Handover
+                                    </h4>
+                                    <span class={sectionBBadgeClass}>{sectionBBadgeLabel}</span>
+                                </div>
+                                <div class="slds-m-bottom_small">
+                                    <lightning-input type="checkbox" label="Required Handover Documents Handed Over to Customer" checked={docsHandedOver} onchange={handleDocsHandedOverChange} disabled={isAppointmentReadOnly}></lightning-input>
+                                </div>
+                                <template lwc:if={isNotAppointmentLocked}>
+                                    <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                        <lightning-file-upload
+                                            label="Upload Supporting Handover Documents (Certificates, Receipts, Manuals)"
+                                            name="handoverDocsUploader"
+                                            record-id={handover.Id}
+                                            onuploadfinished={handleHandoverDocUploadFinished}
+                                            multiple>
+                                        </lightning-file-upload>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Section C: Customer Acknowledgement -->
+                            <div class="handover-section-box slds-box slds-box_small slds-m-bottom_medium">
+                                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                    <h4 class="slds-text-title_bold font-weight-bold" style="color: #0b2345;">
+                                        Section C: Customer Acknowledgement
+                                    </h4>
+                                    <span class={sectionCBadgeClass}>{sectionCBadgeLabel}</span>
+                                </div>
+                                <div class="slds-m-bottom_small">
+                                    <lightning-input type="checkbox" label="Customer Acknowledged Physical Possession Handover" checked={customerAcknowledged} onchange={handleCustomerAcknowledgedChange} disabled={isAppointmentReadOnly}></lightning-input>
+                                </div>
+                                <template lwc:if={isNotAppointmentLocked}>
+                                    <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                        <lightning-file-upload
+                                            label="Upload Signed Customer Acknowledgement Form / Possession Receipt"
+                                            name="signedAckUploader"
+                                            record-id={handover.Id}
+                                            onuploadfinished={handleSignedAckUploadFinished}>
+                                        </lightning-file-upload>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Final Remarks -->
+                            <div class="slds-m-bottom_medium">
+                                <lightning-input type="text" label="Final Remarks" value={finalRemarks} onchange={handleFinalRemarksChange} class="compact-remarks-input" disabled={isAppointmentReadOnly}></lightning-input>
+                            </div>
+
+                            <div class="slds-text-align_right">
+                                <template lwc:if={isAppointmentLocked}>
+                                    <span class="slds-badge slds-theme_success font-weight-bold slds-p-around_x-small">
+                                        <lightning-icon icon-name="utility:check" size="x-small" variant="inverse" class="slds-m-right_xx-small"></lightning-icon>
+                                        Physical Handover Formally Executed &amp; Completed
+                                    </span>
+                                </template>
+                            </div>
+                        </div>
+                    </article>
+                </template>
+
+                <!-- ──── STAGE 5: COMPLETED ──── -->
+                <template lwc:if={isStageCompleted}>
+                    <article class="slds-card slds-card_boundary slds-p-around_large stage-card completed-stage-card">
+                        <div class="completed-hero-box slds-text-align_center">
+                            <lightning-icon icon-name="utility:success" size="large" variant="success" class="slds-m-bottom_small"></lightning-icon>
+                            <h2 class="completed-hero-title font-weight-bold">
+                                HANDOVER COMPLETED
+                            </h2>
+                            <p class="completed-hero-msg">
+                                Handover <strong>{handoverNumber}</strong> has been successfully completed for Unit <strong>{unitName}</strong>.
+                            </p>
+                            <div class="completed-hero-date">
+                                Completion Date: <strong>{completedDateFormatted}</strong>
+                            </div>
+                            <div class="completed-hero-by">
+                                Completed By: <strong>{completedByName}</strong>
+                            </div>
+                        </div>
+                    </article>
+                </template>
+
+            </div>
+            </template>
+
+            <!-- ================= WORKSPACE MODALS ================= -->
+
+            <!-- 1. START INSPECTION MODAL -->
+            <template lwc:if={showStartInspectionModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open slds-modal_medium">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeStartInspectionModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Start Inspection Round</h2>
+                            <p class="slds-m-top_xx-small" style="color: #CBD5E1;">Unit {unitName} &bull; Handover #{handoverNumber}</p>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-grid slds-wrap slds-gutters">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                                    <lightning-combobox label="Inspection Type" value={inspectionType} options={inspectionTypeOptions} onchange={handleInspectionTypeChange} required></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                                    <lightning-input label="Inspector / Lead Auditor Name" value={inspectorName} onchange={handleInspectorNameChange} required></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                                    <lightning-input type="date" label="Planned Completion Date" value={targetInspectionDateInput} onchange={handleTargetInspectionDateInputChange}></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                                    <lightning-input label="Auditing Agency / Company" value={inspectorCompany} onchange={handleInspectorCompanyChange}></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+                                    <lightning-input type="email" label="Inspector Email Address" value={inspectorEmail} onchange={handleInspectorEmailChange}></lightning-input>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeStartInspectionModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Start Inspection" variant="brand" onclick={handleSaveStartInspection}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 1.1 EDIT TARGET INSPECTION DATE MODAL -->
+            <template lwc:if={isEditTargetDateModalOpen}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open slds-modal_small">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeEditTargetDateModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Target Inspection Completion Date</h2>
+                            <p class="slds-m-top_xx-small" style="color: #CBD5E1;">Unit {unitName} &bull; Handover #{handoverNumber}</p>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-form-element">
+                                <lightning-input type="date" label="Planned Inspection Completion Date" value={targetInspectionDateInput} onchange={handleTargetInspectionDateInputChange} required></lightning-input>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                                    Planned target deadline for the property inspection audit round.
+                                </p>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeEditTargetDateModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Save Planned Date" variant="brand" onclick={handleSaveTargetInspectionDate} disabled={isSavingTargetDate}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 2. ADD CHECKLIST ITEM MODAL -->
+            <template lwc:if={showAddChecklistItemModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeAddChecklistItemModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Add Checklist Item</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-m-bottom_small">
+                                <lightning-input label="Item Description / Checkpoint" value={newItemName} onchange={handleNewItemNameChange} required></lightning-input>
+                            </div>
+                            <div class="slds-grid slds-wrap slds-gutters">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-combobox label="Category" value={newItemCategory} options={categoryOptions} onchange={handleNewItemCategoryChange}></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-combobox label="Location" value={newItemLocation} options={locationOptions} onchange={handleNewItemLocationChange}></lightning-combobox>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeAddChecklistItemModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Add Item" variant="brand" onclick={handleSaveChecklistItem}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 3. RAISE SNAG MODAL -->
+            <template lwc:if={showRaiseSnagModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open slds-modal_medium">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeRaiseSnagModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Raise Snag / Defect</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-m-bottom_small">
+                                <lightning-textarea label="Defect Description" value={newSnagDesc} onchange={handleSnagDescChange} required></lightning-textarea>
+                            </div>
+                            <div class="slds-grid slds-wrap slds-gutters">
+                                <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                    <lightning-combobox label="Category" value={newSnagCategory} options={categoryOptions} onchange={handleSnagCategoryChange}></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                    <lightning-combobox label="Location" value={newSnagLocation} options={locationOptions} onchange={handleSnagLocationChange}></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                    <lightning-combobox label="Severity" value={newSnagSeverity} options={severityOptions} onchange={handleSnagSeverityChange}></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                    <lightning-combobox label="Responsible Team" value={newSnagTeam} options={teamOptions} onchange={handleSnagTeamChange}></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                    <lightning-input label="Contractor / Supervisor" value={newSnagContractor} onchange={handleSnagContractorChange}></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3 slds-m-bottom_small">
+                                    <lightning-input type="date" label="Due Date" value={newSnagDueDate} onchange={handleSnagDueDateChange}></lightning-input>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeRaiseSnagModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Raise Snag" variant="brand" onclick={handleSaveSnag}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 4. ASSIGN SNAG MODAL -->
+            <template lwc:if={showAssignModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeAssignModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Assign Snag Owner</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-m-bottom_small">
+                                <lightning-combobox label="Contractor / Supervisor" value={selectedContractor} options={contractorOptions} onchange={handleContractorSelectChange}></lightning-combobox>
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <lightning-combobox label="Responsible Team" value={selectedResponsibleTeam} options={teamOptions} onchange={handleResponsibleTeamChange}></lightning-combobox>
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <lightning-textarea label="Assignment Remarks" value={assignmentRemarks} onchange={handleAssignmentRemarksChange}></lightning-textarea>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeAssignModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Assign" variant="brand" onclick={handleSaveAssignContractor}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 5. RESOLVE / SUBMIT FOR VERIFICATION MODAL -->
+            <template lwc:if={showResolveSnagModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeResolveModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Submit Snag for Verification</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-m-bottom_small">
+                                <lightning-file-upload label="Upload Rectification Evidence (Photo/Video)" record-id={selectedSnagId} onuploadfinished={handleSnagUploadFinished} multiple></lightning-file-upload>
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <lightning-input label="Evidence External Link (Optional)" value={evidenceUrl} onchange={handleEvidenceUrlChange}></lightning-input>
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <lightning-textarea label="Rectification Comments" value={resolutionComments} onchange={handleResolutionCommentsChange} required></lightning-textarea>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeResolveModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Submit for Verification" variant="brand" onclick={handleSaveResolveSnag}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 6. REJECT VERIFICATION / REOPEN MODAL -->
+            <template lwc:if={showReopenModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeReopenModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Reject Verification (Return to In Progress)</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <lightning-textarea label="Rejection Reason / Required Rectification" value={reopenReason} onchange={handleReopenReasonChange} required></lightning-textarea>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeReopenModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Reject & Return to In Progress" variant="destructive" onclick={handleSaveReopenSnag}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 7. RESCHEDULE APPOINTMENT MODAL -->
+            <template lwc:if={showRescheduleModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeRescheduleModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Reschedule Handover Appointment</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-m-bottom_small">
+                                <lightning-input type="date" label="New Appointment Date" value={rescheduleDate} onchange={handleRescheduleDateChange} required></lightning-input>
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <lightning-combobox label="New Time Slot" value={rescheduleSlot} options={timeSlotOptions} onchange={handleRescheduleSlotChange} required></lightning-combobox>
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <lightning-input label="Location / Desk" value={rescheduleLocation} onchange={handleRescheduleLocationChange} required></lightning-input>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeRescheduleModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Reschedule & Send Invite" variant="brand" onclick={handleSaveRescheduleAppointment}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 8. INSPECTION REPORT MODAL -->
+            <template lwc:if={showInspectionReportModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open slds-modal_large">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={handleCloseInspectionReportModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Inspection Audit Report</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <template lwc:if={formalReportData}>
+                                <div class="slds-box slds-m-bottom_medium" style="background: #F8FAFC;">
+                                    <div class="slds-grid slds-wrap slds-gutters">
+                                        <div class="slds-col slds-size_1-of-3">
+                                            <strong>Inspection Reference:</strong> {formalReportData.inspectionName}
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-3">
+                                            <strong>Inspector:</strong> {formalReportData.inspectorName} ({formalReportData.inspectorCompany})
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-3">
+                                            <strong>Status:</strong> {formalReportData.inspectionStatus}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                                    <div class="slds-col slds-size_1-of-3 slds-text-align_center slds-box slds-theme_success">
+                                        <div class="slds-text-heading_medium font-weight-bold">{formalReportData.passedItemsCount}</div>
+                                        <div>Passed Items</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-3 slds-text-align_center slds-box slds-theme_error">
+                                        <div class="slds-text-heading_medium font-weight-bold">{formalReportData.issueItemsCount}</div>
+                                        <div>Issues Found</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-3 slds-text-align_center slds-box slds-theme_shade">
+                                        <div class="slds-text-heading_medium font-weight-bold">{formalReportData.naItemsCount}</div>
+                                        <div>N/A Items</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        <footer class="slds-modal__footer slds-grid slds-grid_align-spread">
+                            <div>
+                                <lightning-button label="Download PDF" variant="neutral" icon-name="utility:download" onclick={handleDownloadReportFromModal}></lightning-button>
+                                <lightning-button label="Share via Email" variant="neutral" icon-name="utility:email" onclick={handleOpenShareReportModal} class="slds-m-left_x-small"></lightning-button>
+                            </div>
+                            <lightning-button label="Close" onclick={handleCloseInspectionReportModal}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 9. SHARE REPORT MODAL -->
+            <template lwc:if={showShareReportModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={handleCloseShareReportModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Share Inspection Report</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-m-bottom_small">
+                                <lightning-input label="Recipient Emails (comma separated)" value={shareReportEmails} onchange={handleShareReportEmailChange} required></lightning-input>
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <lightning-textarea label="Auditor Note" value={shareReportNote} onchange={handleShareReportNoteChange}></lightning-textarea>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={handleCloseShareReportModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Send Report" variant="brand" onclick={handleShareInspectionReport}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 10. SHARE SNAG MODAL -->
+            <template lwc:if={showShareSnagModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={handleCloseShareSnagModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Share Snag External Access</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-m-bottom_small">
+                                <lightning-input type="email" label="Recipient Email Address" value={shareSnagEmail} onchange={handleShareSnagEmailChange} required></lightning-input>
+                            </div>
+                            <div class="slds-m-bottom_small">
+                                <lightning-textarea label="Instructions / Notes" value={shareSnagNote} onchange={handleShareSnagNoteChange}></lightning-textarea>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={handleCloseShareSnagModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Share Access Link" variant="brand" onclick={handleShareSnag}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- 11. EDIT TARGET DATE MODAL -->
+            <template lwc:if={showEditTargetDateModal}>
+                <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header dark-navy-header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeEditTargetDateModal} title="Close">
+                                <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                            </button>
+                            <h2 class="slds-text-heading_medium font-weight-bold" style="color: #FFFFFF;">Edit Target Handover Date</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <lightning-input type="date" label="Target Handover Date" value={targetDateVal} onchange={handleTargetDateChange} required></lightning-input>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button label="Cancel" onclick={closeEditTargetDateModal} class="slds-m-right_x-small"></lightning-button>
+                            <lightning-button label="Save Date" variant="brand" onclick={handleSaveTargetDate}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+        </template>
+    </div>
+</template>

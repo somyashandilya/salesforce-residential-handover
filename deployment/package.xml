@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <!-- ================================================================= -->
+    <!-- Residential Handover Implementation Metadata Manifest (package.xml) -->
+    <!-- Target Salesforce API Version: 64.0 / 68.0                        -->
+    <!-- ================================================================= -->
+
+    <!-- Apex Classes -->
+    <types>
+        <members>BookingHandoverHandler</members>
+        <members>ExternalInspectionService</members>
+        <members>HandoverDocumentGenerator</members>
+        <members>HandoverNotificationEngine</members>
+        <members>HandoverTestDataFactory</members>
+        <members>HandoverWorkspaceController</members>
+        <members>HandoverWorkspaceControllerTest</members>
+        <members>InspectionReportPDFController</members>
+        <members>InspectionReportPDFControllerTest</members>
+        <members>RentResaleWorkspaceController</members>
+        <members>RentResaleWorkspaceControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+
+    <!-- Apex Triggers -->
+    <types>
+        <members>BookingHandoverTrigger</members>
+        <members>InspectionTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+
+    <!-- Visualforce Pages -->
+    <types>
+        <members>InspectionReportPDF</members>
+        <name>ApexPage</name>
+    </types>
+
+    <!-- Lightning Web Components (LWC) -->
+    <types>
+        <members>externalInspectionApp</members>
+        <members>handoverContinueToAppointmentAction</members>
+        <members>handoverDownloadInspectionReportAction</members>
+        <members>handoverInspectionDoneAction</members>
+        <members>handoverStartInspectionAction</members>
+        <members>handoverWorkspace</name>
+        <name>LightningComponentBundle</name>
+    </types>
+
+    <!-- Custom Objects -->
+    <types>
+        <members>Handover__c</members>
+        <members>Inspection__c</members>
+        <members>Inspection_Checklist_Item__c</members>
+        <members>Snag__c</members>
+        <members>Handover_Event_Log__c</members>
+        <name>CustomObject</name>
+    </types>
+
+    <!-- Handover Fields on Core Real Estate Objects -->
+    <types>
+        <members>Unit__c.Current_Handover__c</members>
+        <members>Unit__c.Possession_Readiness_Status__c</members>
+        <members>Unit__c.Possession_Ready_Date__c</members>
+        <members>Booking__c.Handover__c</members>
+        <members>Booking__c.Possession_Date__c</members>
+        <members>Booking__c.Ownership_Transfer_In_Progress__c</members>
+        <name>CustomField</name>
+    </types>
+
+    <!-- Quick Actions -->
+    <types>
+        <members>Handover__c.Auditor_Link</members>
+        <members>Handover__c.Continue_to_Appointment</members>
+        <members>Handover__c.Download_Inspection_Report</members>
+        <members>Handover__c.Inspection_Done</members>
+        <members>Handover__c.Property_Details</members>
+        <members>Handover__c.Start_Inspection</members>
+        <members>Handover__c.View_Booking</members>
+        <name>QuickAction</name>
+    </types>
+
+    <!-- FlexiPages (Lightning Record & App Pages) -->
+    <types>
+        <members>Handover_Record_Page</members>
+        <members>Handover_Workspace_App</members>
+        <name>FlexiPage</name>
+    </types>
+
+    <!-- Path Assistants -->
+    <types>
+        <members>Handover_Path</members>
+        <name>PathAssistant</name>
+    </types>
+
+    <!-- Permission Sets -->
+    <types>
+        <members>Residential_Handover_Manager</members>
+        <name>PermissionSet</name>
+    </types>
+
+    <!-- Custom Tabs -->
+    <types>
+        <members>External_Inspection_Portal</members>
+        <members>Handover_Hub</members>
+        <members>Handover__c</members>
+        <name>CustomTab</name>
+    </types>
+
+    <!-- Page Layouts -->
+    <types>
+        <members>Handover__c-Handover Layout</members>
+        <members>Inspection__c-Property Inspection Layout</members>
+        <members>Inspection_Checklist_Item__c-Checklist Item Layout</members>
+        <members>Snag__c-Snag Layout</members>
+        <members>Handover_Event_Log__c-Handover Event Log Layout</members>
+        <name>Layout</name>
+    </types>
+
+    <version>64.0</version>
+</Package>

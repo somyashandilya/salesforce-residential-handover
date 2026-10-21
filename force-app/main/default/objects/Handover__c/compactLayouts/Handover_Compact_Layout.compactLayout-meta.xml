@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Handover_Compact_Layout</fullName>
+    <fields>Name</fields>
+    <fields>Customer__c</fields>
+    <fields>Unit__c</fields>
+    <fields>Property__c</fields>
+    <fields>Handover_Owner__c</fields>
+    <fields>Target_Handover_Date__c</fields>
+    <fields>Status__c</fields>
+    <label>Handover Compact Layout</label>
+</CompactLayout>

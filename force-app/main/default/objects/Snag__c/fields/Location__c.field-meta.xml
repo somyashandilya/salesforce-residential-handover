@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Location__c</fullName>
+    <description>Unit physical location for snag and inspection item</description>
+    <externalId>false</externalId>
+    <label>Location</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Living &amp; Dining</fullName>
+                <default>true</default>
+                <label>Living &amp; Dining</label>
+            </value>
+            <value>
+                <fullName>Master Bedroom</fullName>
+                <default>false</default>
+                <label>Master Bedroom</label>
+            </value>
+            <value>
+                <fullName>Bedroom 2</fullName>
+                <default>false</default>
+                <label>Bedroom 2</label>
+            </value>
+            <value>
+                <fullName>Kitchen</fullName>
+                <default>false</default>
+                <label>Kitchen</label>
+            </value>
+            <value>
+                <fullName>Balcony</fullName>
+                <default>false</default>
+                <label>Balcony</label>
+            </value>
+            <value>
+                <fullName>Bathroom</fullName>
+                <default>false</default>
+                <label>Bathroom</label>
+            </value>
+            <value>
+                <fullName>Utility</fullName>
+                <default>false</default>
+                <label>Utility</label>
+            </value>
+            <value>
+                <fullName>Common Area</fullName>
+                <default>false</default>
+                <label>Common Area</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

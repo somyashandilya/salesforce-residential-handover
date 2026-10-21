@@ -1,0 +1,99 @@
+<template>
+    <lightning-quick-action-panel title="Complete Inspection (Inspection Done)">
+        <template lwc:if={isLoading}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <lightning-spinner alternative-text="Checking Inspection Status..." size="medium"></lightning-spinner>
+                <p class="slds-m-top_large slds-text-color_weak font-semibold">Validating checklist completion criteria...</p>
+            </div>
+        </template>
+        <template lwc:else>
+            <template lwc:if={hasInspection}>
+                <div class="slds-p-around_small">
+                    <!-- Inspection Header -->
+                    <div class="slds-box slds-box_xx-small slds-theme_shade slds-m-bottom_small">
+                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                            <div>
+                                <span class="slds-text-title_bold font-weight-bold" style="color: #0B2345;">
+                                    {statusData.inspectionName}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="slds-badge slds-theme_inverse">{statusData.inspectionStatus}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checklist Audit Metrics Strip -->
+                    <div class="slds-grid slds-gutters_xx-small slds-m-bottom_medium slds-text-align_center">
+                        <div class="slds-col slds-size_1-of-5">
+                            <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                <div class="slds-text-title slds-text-color_weak">Total</div>
+                                <div class="slds-text-heading_small font-weight-bold">{statusData.totalCount}</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-5">
+                            <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                <div class="slds-text-title slds-text-color_success">Passed</div>
+                                <div class="slds-text-heading_small font-weight-bold" style="color: #059669;">{statusData.passedCount}</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-5">
+                            <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                <div class="slds-text-title slds-text-color_weak">N/A</div>
+                                <div class="slds-text-heading_small font-weight-bold">{statusData.naCount}</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-5">
+                            <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                <div class="slds-text-title slds-text-color_error">Issues</div>
+                                <div class="slds-text-heading_small font-weight-bold" style="color: #DC2626;">{statusData.issuesCount}</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-5">
+                            <div class="slds-box slds-box_xx-small slds-theme_shade">
+                                <div class="slds-text-title slds-text-color_weak">Open Snags</div>
+                                <div class="slds-text-heading_small font-weight-bold" style="color: #D97706;">{statusData.unclosedSnagsCount}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Readiness / Completion Status Message -->
+                    <template lwc:if={canComplete}>
+                        <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_small" role="alert" style="border-radius: 4px;">
+                            <lightning-icon icon-name="utility:check" size="x-small" variant="inverse" class="slds-m-right_x-small"></lightning-icon>
+                            <span class="slds-text-body_regular font-semibold">
+                                All checklist items meet the completion criteria (all Pass or N/A, and all snags resolved &amp; closed).
+                            </span>
+                        </div>
+                        <p class="slds-text-body_small slds-text-color_weak">
+                            Click <strong>Complete Inspection</strong> to lock the audit and unlock the official Inspection Report and Handover Ready progression.
+                        </p>
+                    </template>
+                    <template lwc:else>
+                        <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_small" role="alert" style="border-radius: 4px;">
+                            <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                            <span class="slds-text-body_regular font-semibold">
+                                {statusData.message}
+                            </span>
+                        </div>
+                        <p class="slds-text-body_small slds-text-color_weak">
+                            Every checklist item must be <strong>Pass</strong> or an allowed <strong>N/A</strong>. Any item linked to an open, in-progress, or unverified Snag must be resolved, closed, and verified in <strong>Snag Resolution</strong> before completing the inspection.
+                        </p>
+                    </template>
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="slds-p-around_large slds-text-align_center">
+                    <p class="slds-text-body_regular slds-text-color_weak">{statusData.message}</p>
+                </div>
+            </template>
+        </template>
+
+        <div slot="footer">
+            <lightning-button label="Cancel" variant="neutral" onclick={handleClose} class="slds-m-right_x-small"></lightning-button>
+            <template lwc:if={canComplete}>
+                <lightning-button label="Complete Inspection" variant="brand" icon-name="utility:check" onclick={handleCompleteInspection} disabled={isSubmitting}></lightning-button>
+            </template>
+        </div>
+    </lightning-quick-action-panel>
+</template>

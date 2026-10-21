@@ -1,0 +1,40 @@
+<template>
+    <lightning-quick-action-panel title="Continue to Appointment &amp; Handover">
+        <template lwc:if={isLoading}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <lightning-spinner alternative-text="Checking Stage Prerequisites..." size="medium"></lightning-spinner>
+                <p class="slds-m-top_large slds-text-color_weak font-semibold">Validating snag resolution and inspection completion...</p>
+            </div>
+        </template>
+        <template lwc:else>
+            <div class="slds-p-around_small">
+                <template lwc:if={canProceed}>
+                    <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_small" role="alert" style="border-radius: 4px;">
+                        <lightning-icon icon-name="utility:check" size="x-small" variant="inverse" class="slds-m-right_x-small"></lightning-icon>
+                        <span class="slds-text-body_regular font-semibold">
+                            Inspection is completed and all snags have been closed and verified.
+                        </span>
+                    </div>
+                    <p class="slds-text-body_regular slds-m-bottom_small">
+                        You are ready to advance <strong>{handoverName}</strong> to <strong>Stage 4: Appointment &amp; Handover</strong> to schedule customer possession appointments and prepare key handover packs.
+                    </p>
+                </template>
+                <template lwc:else>
+                    <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_small" role="alert" style="border-radius: 4px;">
+                        <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                        <span class="slds-text-body_regular font-semibold">
+                            {blockingReason}
+                        </span>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <div slot="footer">
+            <lightning-button label="Cancel" variant="neutral" onclick={handleClose} class="slds-m-right_x-small"></lightning-button>
+            <template lwc:if={canProceed}>
+                <lightning-button label="Continue to Appointment" variant="brand" icon-name="utility:forward" onclick={handleAdvanceToAppointment} disabled={isSubmitting}></lightning-button>
+            </template>
+        </div>
+    </lightning-quick-action-panel>
+</template>

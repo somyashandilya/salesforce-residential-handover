@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Handover Workspace</masterLabel>
+    <description>Residential Real Estate Handover 5-Stage Workspace</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__Tab</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="displayMode" type="String" default="all" label="Display Mode" description="Set to 'path' for standalone stage path, 'workspace' for stage content only, or 'all' for combined."/>
+            <objects>
+                <object>Handover__c</object>
+                <object>Booking__c</object>
+                <object>Unit__c</object>
+            </objects>
+        </targetConfig>
+        <targetConfig targets="lightning__AppPage, lightning__HomePage">
+            <property name="displayMode" type="String" default="all" label="Display Mode" description="Set to 'path' for standalone stage path, 'workspace' for stage content only, or 'all' for combined."/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,64 @@
+<template>
+    <lightning-quick-action-panel title="Start Inspection Round">
+        <template lwc:if={isLoading}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <lightning-spinner alternative-text="Validating Readiness Prerequisites..." size="medium"></lightning-spinner>
+                <p class="slds-m-top_large slds-text-color_weak font-semibold">Validating readiness conditions and gating checks...</p>
+            </div>
+        </template>
+        <template lwc:else>
+            <template lwc:if={isReadinessBlocked}>
+                <!-- Incomplete Prerequisites Alert -->
+                <div class="slds-p-around_large slds-text-align_center">
+                    <lightning-icon icon-name="utility:warning" size="medium" variant="warning" class="slds-m-bottom_small"></lightning-icon>
+                    <h3 class="slds-text-heading_small font-bold" style="color: #0B2345;">Readiness Gate Incomplete</h3>
+                    <p class="slds-text-body_regular slds-text-color_weak slds-m-top_x-small">
+                        Cannot advance to Inspection because the following prerequisite condition is incomplete:
+                    </p>
+                    <div class="slds-box slds-box_small slds-theme_shade slds-m-top_small slds-text-align_left" style="border-left: 4px solid #B45309;">
+                        <span class="slds-text-body_small font-semibold text-warning" style="color: #B45309;">
+                            {blockingReason}
+                        </span>
+                    </div>
+                </div>
+            </template>
+            <template lwc:else>
+                <!-- Inspection Start Form -->
+                <div class="slds-p-around_small modal-body-container">
+                    <div class="slds-notify slds-notify_alert slds-alert_info slds-m-bottom_small" role="alert" style="background: #F0FDF4; border-color: #86EFAC; color: #166534;">
+                        <lightning-icon icon-name="utility:check" size="xx-small" variant="success" class="slds-m-right_x-small"></lightning-icon>
+                        <span class="font-semibold">All readiness gate checks satisfied. Ready to initiate inspection round.</span>
+                    </div>
+
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                            <lightning-combobox label="Inspection Type" value={inspectionType} options={inspectionTypeOptions} onchange={handleInspectionTypeChange} required></lightning-combobox>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                            <lightning-input type="date" label="Planned Completion Date" value={targetInspectionDate} onchange={handleTargetInspectionDateChange} required></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                            <lightning-input label="Inspector / Lead Auditor Name" value={inspectorName} onchange={handleInspectorNameChange} required></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                            <lightning-input label="Auditing Agency / Company" value={inspectorCompany} onchange={handleInspectorCompanyChange}></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+                            <lightning-input type="email" label="Inspector Email Address (for external links)" value={inspectorEmail} onchange={handleInspectorEmailChange}></lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </template>
+
+        <div slot="footer">
+            <template lwc:if={isReadinessBlocked}>
+                <lightning-button label="Close" variant="neutral" onclick={handleClose}></lightning-button>
+            </template>
+            <template lwc:else>
+                <lightning-button label="Cancel" variant="neutral" onclick={handleClose} class="slds-m-right_x-small"></lightning-button>
+                <lightning-button label="Start Inspection" variant="brand" icon-name="utility:play" onclick={handleConfirmStart} disabled={isStartDisabled}></lightning-button>
+            </template>
+        </div>
+    </lightning-quick-action-panel>
+</template>

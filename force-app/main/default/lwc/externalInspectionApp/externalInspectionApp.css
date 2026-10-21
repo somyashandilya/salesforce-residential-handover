@@ -1,0 +1,167 @@
+:host {
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.external-portal-root {
+    background-color: #f8fafc;
+    min-height: 100vh;
+    padding: 24px 16px;
+}
+
+.portal-container {
+    max-width: 980px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.portal-header {
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 8px 8px 0 0;
+}
+
+.portal-badge-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #38bdf8;
+    text-transform: uppercase;
+}
+
+.portal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.portal-subtitle {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.portal-meta-status {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+.category-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: none;
+}
+
+.category-header {
+    background-color: #f8fafc;
+    padding: 10px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.item-row {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.15s ease;
+}
+
+.item-row:last-child {
+    border-bottom: none;
+}
+
+.item-row:hover {
+    background-color: #f8fafc;
+}
+
+.item-row_passed {
+    background-color: #f0fdf4 !important;
+}
+
+.item-row_issue {
+    background-color: #fef2f2 !important;
+}
+
+.item-row_na {
+    background-color: #f8fafc !important;
+}
+
+.item-info {
+    flex: 1;
+    padding-right: 16px;
+}
+
+.item-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.item-title {
+    font-size: 0.925rem;
+    color: #1e293b;
+}
+
+.item-loc {
+    margin-top: 2px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.725rem;
+    font-weight: 600;
+    border-radius: 12px;
+}
+
+.badge-pass {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.badge-issue {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+.badge-na {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-pass-active {
+    background-color: #16a34a !important;
+    color: #ffffff !important;
+    border-color: #16a34a !important;
+    font-weight: 600;
+}
+
+.btn-issue-active {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    border-color: #dc2626 !important;
+    font-weight: 600;
+}
+
+.btn-na-active {
+    background-color: #475569 !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+    font-weight: 600;
+}
+
+.success-box {
+    border-radius: 8px;
+    padding: 32px 24px;
+}

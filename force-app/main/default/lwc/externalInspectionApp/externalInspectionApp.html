@@ -1,0 +1,103 @@
+<template>
+    <div class="external-portal-root">
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="Loading Inspection..." size="medium"></lightning-spinner>
+        </template>
+
+        <div class="portal-container slds-card">
+            <!-- Header -->
+            <div class="portal-header slds-p-around_large">
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                    <div>
+                        <div class="portal-badge-label">THIRD-PARTY PROPERTY INSPECTION PORTAL</div>
+                        <h1 class="portal-title slds-m-top_xx-small">
+                            {inspectionTitle}
+                        </h1>
+                        <p class="portal-subtitle slds-m-top_xx-small">
+                            {inspectionSubtitle}
+                        </p>
+                    </div>
+                    <div class="slds-text-align_right">
+                        <span class="slds-badge slds-theme_success">Token Verified</span>
+                        <div class="portal-meta-status slds-m-top_xx-small">Status: {inspectionStatusText}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="slds-p-around_large">
+                <!-- If already submitted / completed -->
+                <template lwc:if={isSubmitted}>
+                    <div class="slds-box slds-box_small slds-theme_success slds-m-bottom_medium slds-text-align_center slds-p-around_large success-box">
+                        <lightning-icon icon-name="utility:success" size="large" variant="inverse" class="slds-m-bottom_small"></lightning-icon>
+                        <h2 class="slds-text-heading_medium slds-font-weight_bold">✓ Inspection Audit Submitted Successfully</h2>
+                        <p class="slds-text-body_regular slds-m-top_x-small">
+                            Inspection findings for Unit <strong>{unitName}</strong> have been securely submitted and logged in Salesforce.
+                        </p>
+                        <template lwc:if={inspectionRef}>
+                            <p class="slds-text-body_small slds-m-top_xx-small" style="opacity: 0.85;">
+                                Reference Number: <strong>{inspectionRef}</strong>
+                            </p>
+                        </template>
+                    </div>
+                </template>
+
+                <template lwc:else>
+                    <!-- Action Bar -->
+                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_medium slds-p-bottom_small slds-border_bottom">
+                        <div>
+                            <h2 class="slds-text-heading_small slds-font-weight_bold">Inspection Checklist Line Items</h2>
+                            <p class="slds-text-body_small slds-text-color_weak">Mark each item as Pass, Issue, or N/A. All submissions synchronize directly to Salesforce Handover records.</p>
+                        </div>
+                        <lightning-button variant="brand" label="Submit Inspection" icon-name="utility:check" onclick={handleSubmitInspection}></lightning-button>
+                    </div>
+
+                    <!-- Categories & Checklist items -->
+                    <template for:each={checklistGroups} for:item="grp">
+                        <div key={grp.category} class="slds-card slds-m-bottom_medium slds-border_around category-card">
+                            <div class="slds-card__header slds-grid slds-grid_align-spread category-header">
+                                <h3 class="slds-text-title_bold">{grp.category}</h3>
+                                <span class="slds-text-body_small slds-text-color_weak">{grp.itemCountText}</span>
+                            </div>
+                            <div class="slds-card__body slds-card__body_inner slds-p-around_none">
+                                <template for:each={grp.items} for:item="item">
+                                    <div key={item.Id} class={item.rowClass}>
+                                        <div class="item-info">
+                                            <div class="item-name-row">
+                                                <strong class="item-title">{item.Name}</strong>
+                                                <template lwc:if={item.isPassed}>
+                                                    <span class="status-badge badge-pass">✓ Passed</span>
+                                                </template>
+                                                <template lwc:if={item.isIssue}>
+                                                    <span class="status-badge badge-issue">⚠ Issue Found</span>
+                                                </template>
+                                                <template lwc:if={item.isNA}>
+                                                    <span class="status-badge badge-na">N/A</span>
+                                                </template>
+                                            </div>
+                                            <div class="slds-text-body_small slds-text-color_weak item-loc">
+                                                Location: {item.Location__c}
+                                            </div>
+                                        </div>
+                                        <div class="slds-button-group" role="group">
+                                            <button class={item.passBtnClass} onclick={handleSetPass} data-id={item.Id}>Pass</button>
+                                            <button class={item.issueBtnClass} onclick={handleSetIssue} data-id={item.Id}>Issue</button>
+                                            <button class={item.naBtnClass} onclick={handleSetNA} data-id={item.Id}>N/A</button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-top_large slds-p-top_medium slds-border_top">
+                        <div class="slds-text-body_small slds-text-color_weak">
+                            Completed <strong>{completedCount}</strong> of <strong>{totalItemsCount}</strong> items
+                        </div>
+                        <lightning-button variant="brand" label="Submit &amp; Lock Inspection" icon-name="utility:lock" onclick={handleSubmitInspection}></lightning-button>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>
